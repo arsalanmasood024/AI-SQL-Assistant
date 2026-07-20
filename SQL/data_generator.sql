@@ -1,6 +1,3 @@
-
-
-
 CREATE TABLE Customers (
     CustomerID INT IDENTITY(1,1) PRIMARY KEY,
 
@@ -17,6 +14,7 @@ CREATE TABLE Customers (
 
     RegistrationDate DATE NOT NULL DEFAULT GETDATE()
 );
+
 CREATE TABLE Categories (
     CategoryID INT IDENTITY(1,1) PRIMARY KEY,
     CategoryName NVARCHAR(100) NOT NULL UNIQUE,
@@ -25,24 +23,18 @@ CREATE TABLE Categories (
 
 CREATE TABLE Suppliers (
     SupplierID INT IDENTITY(1,1) PRIMARY KEY,
-
-    SupplierName NVARCHAR(150) NOT NULL,
-
-    ContactPerson NVARCHAR(150),
-
-    Email NVARCHAR(255),
-
-    Phone NVARCHAR(30),
-
-    City NVARCHAR(100),
-
-    Country NVARCHAR(150)
+    SupplierName NVARCHAR(100) NOT NULL,
+    ContactPerson NVARCHAR(100),
+    Email NVARCHAR(100),
+    Phone NVARCHAR(20),
+    City NVARCHAR(50),
+    Country NVARCHAR(50)
 );
 
 CREATE TABLE Products (
     ProductID INT IDENTITY(1,1) PRIMARY KEY,
     ProductName NVARCHAR(150) NOT NULL,
-    ProductDescription NVARCHAR(500),
+
     CategoryID INT NOT NULL,
     SupplierID INT NOT NULL,
 
@@ -64,10 +56,10 @@ CREATE TABLE Products (
 
 CREATE TABLE Employees (
     EmployeeID INT IDENTITY(1,1) PRIMARY KEY,
-    FirstName NVARCHAR(100) NOT NULL,
-    LastName NVARCHAR(100) NOT NULL,
-    Email NVARCHAR(255) NOT NULL UNIQUE,
-    Department NVARCHAR(100),
+    FirstName NVARCHAR(50) NOT NULL,
+    LastName NVARCHAR(50) NOT NULL,
+    Email NVARCHAR(100) UNIQUE,
+    Department NVARCHAR(50),
     JobTitle NVARCHAR(100),
     HireDate DATE,
     Salary DECIMAL(10,2)
@@ -77,17 +69,10 @@ CREATE TABLE Orders (
 
     CustomerID INT NOT NULL,
     EmployeeID INT NOT NULL,
-    PaymentMethod NVARCHAR(30),
+
     OrderDate DATETIME DEFAULT GETDATE(),
 
-    Status NVARCHAR(20) NOT NULL
-    CHECK (Status IN (
-    'Pending',
-    'Processing',
-    'Shipped',
-    'Delivered',
-    'Cancelled'
-    )),
+    Status NVARCHAR(30),
 
     TotalAmount DECIMAL(12,2),
 
@@ -126,7 +111,7 @@ CREATE TABLE Inventory (
 
     ProductID INT NOT NULL,
 
-    Warehouse NVARCHAR(150),
+    Warehouse NVARCHAR(100),
 
     StockQuantity INT,
 
@@ -138,15 +123,3 @@ CREATE TABLE Inventory (
         FOREIGN KEY(ProductID)
         REFERENCES Products(ProductID)
 );
-
-CREATE INDEX IX_Customers_Email
-ON Customers(Email);
-
-CREATE INDEX IX_Orders_OrderDate
-ON Orders(OrderDate);
-
-CREATE INDEX IX_Products_Category
-ON Products(CategoryID);
-
-CREATE INDEX IX_OrderItems_Product
-ON OrderItems(ProductID);
