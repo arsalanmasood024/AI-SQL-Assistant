@@ -5,6 +5,9 @@ from database.data_gen.product_generator import generate_products
 from database.data_gen.supplier_generator import generate_suppliers
 from database.data_gen.category_generator import generate_categories
 from database.data_gen.employee_generator import generate_employees
+from database.data_gen.order_generator import generate_orders
+from database.data_gen.orderitem_generator import generate_order_items
+from database.data_gen.inventory_generator import generate_inventory    
 
 
 
@@ -15,6 +18,9 @@ categories = generate_categories()
 products = generate_products(100)
 suppliers = generate_suppliers(30)
 employees = generate_employees(25)
+orders = generate_orders(list(range(1, 101)), list(range(1, 26)), 200)
+order_items = generate_order_items(list(range(1, 201)), list(range(1, 101)), 500)
+inventory = generate_inventory(list(range(1, 101)))
 
 with engine.begin() as conn:
 
@@ -113,3 +119,135 @@ with engine.begin() as conn:
         )
 
     print("✅ Employees inserted successfully!")
+
+    customer_ids = [
+        row[0] for row in conn.execute(
+            text("SELECT CustomerID FROM Customers")
+        )
+    ]
+
+    employee_ids = [
+        row[0] for row in conn.execute(
+            text("SELECT EmployeeID FROM Employees")
+        )
+    ]
+
+    product_ids = [
+        row[0] for row in conn.execute(
+            text("SELECT ProductID FROM Products")
+        )
+    ]
+
+
+    print("✅ IDs fetched successfully!")
+
+
+    orders = generate_orders(
+        customer_ids,
+        employee_ids,
+        200
+    )
+
+  
+    for order in orders:
+
+        conn.execute(
+            text("""
+                INSERT INTO Orders
+                (
+                    CustomerID,
+                    EmployeeID,
+                    OrderDate,
+                    Status,
+                    TotalAmount
+                )
+                VALUES
+                (
+                    :CustomerID,
+                    :EmployeeID,
+                    :OrderDate,
+                    :Status,
+                    :TotalAmount
+                )
+            """),
+            order
+        )
+
+
+    print("✅ Orders inserted successfully!")
+
+
+    order_ids = [
+        row[0] for row in conn.execute(
+            text("SELECT OrderID FROM Orders")
+        )
+    ]
+
+    order_items = generate_order_items(
+        order_ids,
+        product_ids,
+        500
+    )
+
+
+    for item in order_items:
+
+        conn.execute(
+            text("""
+                INSERT INTO OrderItems
+                (
+                    OrderID,
+                    ProductID,
+                    Quantity,
+                    UnitPrice,
+                    Discount
+                )
+                VALUES
+                (
+                    :OrderID,
+                    :ProductID,
+                    :Quantity,
+                    :UnitPrice,
+                    :Discount
+                )
+            """),
+            item
+        )
+
+
+    print("✅ Order Items inserted successfully!")
+
+
+
+
+    inventory = generate_inventory(
+        product_ids
+    )
+
+
+    for stock in inventory:
+
+        conn.execute(
+            text("""
+                INSERT INTO Inventory
+                (
+                    ProductID,
+                    StockQuantity,
+                    ReorderLevel,
+                    Warehouse,
+                    LastUpdated
+                )
+                VALUES
+                (
+                    :ProductID,
+                    :StockQuantity,
+                    :ReorderLevel,
+                    :Warehouse,
+                    :LastUpdated
+                )
+            """),
+            stock
+        )
+
+
+    print("✅ Inventory inserted successfully!")
