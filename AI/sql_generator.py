@@ -1,49 +1,47 @@
-import os
+import ollama
+from AI.prompt import SYSTEM_PROMPT
 
-from openai import OpenAI
-
-from dotenv import load_dotenv
-
-from .prompt import SYSTEM_PROMPT
-
-load_dotenv()
-
-client = OpenAI(
-    api_key=os.getenv("OPENAI_API_KEY")
-)
+MODEL = "llama3.2:3b"
 
 
-def generate_sql(question):
-
-    response = client.chat.completions.create(
-
-        model="gpt-4.1-mini",
-
+def generate_sql(question: str) -> str:
+    response = ollama.chat(
+        model=MODEL,
         messages=[
             {
                 "role": "system",
                 "content": SYSTEM_PROMPT
             },
-
             {
                 "role": "user",
                 "content": question
             }
         ],
-
-        temperature=0
+        options={
+            "temperature": 0
+        }   
 
     )
+    response = ollama.chat(
+    model=MODEL,
+    messages=[
+        {"role": "system", "content": SYSTEM_PROMPT},
+        {"role": "user", "content": question}
+    ],
+    options={
+        "temperature": 0
+    }
+)
 
-    sql = response.choices[0].message.content.strip()
+    return response["message"]["content"].strip()
 
-    return sql
 
 
 if __name__ == "__main__":
 
-    question = "Show top 10 customers"
+    question = "Show top 10 customers by total sales"
 
     sql = generate_sql(question)
 
+    print("\nGenerated SQL:\n")
     print(sql)
