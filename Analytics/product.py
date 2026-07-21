@@ -78,4 +78,5 @@ def product_revenue():
 
 if __name__ == "__main__":
     top_products()
-    category_sales()
+    category_sales()    
+    product_revenue()

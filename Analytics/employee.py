@@ -74,3 +74,5 @@ def employee_sales():
 
 if __name__ == "__main__":
     employee_orders()
+    employee_sales()
+    
