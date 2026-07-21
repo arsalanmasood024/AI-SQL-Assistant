@@ -1,17 +1,24 @@
 import streamlit as st
 
 
-def show_sql(sql):
-
-    st.subheader("Generated SQL")
-
-    st.code(sql, language="sql")
-
-
 def show_metrics(df, elapsed):
 
-    c1, c2 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
 
-    c1.metric("Rows", len(df))
+    with col1:
+        st.metric(
+            "📄 Rows Returned",
+            len(df)
+        )
 
-    c2.metric("Execution Time", f"{elapsed:.3f}s")
+    with col2:
+        st.metric(
+            "📋 Columns",
+            len(df.columns)
+        )
+
+    with col3:
+        st.metric(
+            "⚡ Execution Time",
+            f"{elapsed:.3f} sec"
+        )
