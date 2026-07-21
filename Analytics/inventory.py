@@ -1,26 +1,24 @@
 import pandas as pd
 from database.connection import get_engine
 
-
 engine = get_engine()
 
 
-def low_stock_products():
+def low_stock():
 
     query = """
 
     SELECT
-        p.ProductName,
-        i.StockQuantity
 
-    FROM Inventory i
+        ProductName,
 
-    JOIN Products p
-    ON i.ProductID = p.ProductID
+        StockQuantity
 
-    WHERE i.StockQuantity < 20
+    FROM Products
 
-    ORDER BY i.StockQuantity ASC
+    WHERE StockQuantity < 10
+
+    ORDER BY StockQuantity;
 
     """
 
@@ -32,18 +30,15 @@ def low_stock_products():
     return df
 
 
-
 def inventory_value():
 
     query = """
 
     SELECT
-        SUM(i.StockQuantity * p.Price) AS InventoryValue
 
-    FROM Inventory i
+        SUM(StockQuantity * UnitCost) AS InventoryValue
 
-    JOIN Products p
-    ON i.ProductID = p.ProductID
+    FROM Products;
 
     """
 
@@ -55,7 +50,6 @@ def inventory_value():
     return df
 
 
-
 if __name__ == "__main__":
-    low_stock_products()
+    low_stock()
     inventory_value()

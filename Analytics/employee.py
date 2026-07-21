@@ -42,7 +42,35 @@ def employee_orders():
 
     return df
 
+def employee_sales():
 
+    query = """
+
+    SELECT
+
+        e.FirstName + ' ' + e.LastName AS Employee,
+
+        SUM(o.TotalAmount) AS Revenue
+
+    FROM Employees e
+
+    JOIN Orders o
+        ON e.EmployeeID=o.EmployeeID
+
+    GROUP BY
+        e.FirstName,
+        e.LastName
+
+    ORDER BY Revenue DESC;
+
+    """
+
+    df = pd.read_sql(query, engine)
+
+    print("\nEmployee Revenue")
+    print(df)
+
+    return df
 
 if __name__ == "__main__":
     employee_orders()

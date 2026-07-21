@@ -2,10 +2,11 @@ import pandas as pd
 from sqlalchemy import text
 from database.connection import get_engine
 
+engine = get_engine()
 
 def total_revenue():
 
-    engine = get_engine()
+   
 
     query = """
     SELECT 
@@ -21,7 +22,6 @@ def total_revenue():
 
 def monthly_sales():
 
-    engine = get_engine()
 
     query = """
     SELECT
@@ -51,7 +51,6 @@ def monthly_sales():
 
 def top_products():
 
-    engine = get_engine()
 
     query = """
     SELECT TOP 10
@@ -71,7 +70,6 @@ def top_products():
 
 def product_revenue():
 
-    engine = get_engine()
 
     query = """
     SELECT TOP 10
@@ -89,7 +87,30 @@ def product_revenue():
     print("\nTop Revenue Products")
     print(df)
 
+def daily_sales():
 
+    query = """
+
+    SELECT
+
+        CAST(OrderDate AS DATE) AS SaleDate,
+
+        SUM(TotalAmount) AS Revenue
+
+    FROM Orders
+
+    GROUP BY CAST(OrderDate AS DATE)
+
+    ORDER BY SaleDate;
+
+    """
+
+    df = pd.read_sql(query, engine)
+
+    print("\nDaily Sales")
+    print(df)
+
+    return df
 
 
 if __name__ == "__main__":
@@ -101,3 +122,5 @@ if __name__ == "__main__":
     top_products()
 
     product_revenue()
+
+    daily_sales()
